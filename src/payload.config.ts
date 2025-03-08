@@ -21,6 +21,9 @@ import { getServerSideURL } from './utilities/getURL'
 // import { s3Storage } from '@payloadcms/storage-s3'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 
+// Needed for email adapter.
+import brevoAdapter from './utilities/brevoAdapter'
+
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
@@ -61,6 +64,8 @@ export default buildConfig({
       ],
     },
   },
+  // Configure Brevo email adapter.
+  email: brevoAdapter(),
   // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
   db: mongooseAdapter({

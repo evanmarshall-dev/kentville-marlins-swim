@@ -17,6 +17,9 @@ import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
 
+// Needed for storage bucket.
+import { s3Storage } from '@payloadcms/storage-s3'
+
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
@@ -67,7 +70,23 @@ export default buildConfig({
   globals: [Header, Footer],
   plugins: [
     ...plugins,
-    // storage-adapter-placeholder
+    // Install @payloadcms/storage-s3 and add below for configuration.
+    s3Storage({
+      collections: {
+        // Specify which collections will be uploaded.
+        media: true,
+      },
+      // Needs to be passed in as a string.
+      bucket: process.env.S3_BUCKET_NAME || '',
+      config: {
+        region: process.env.S3_REGION || '',
+        endpoint: process.env.S3_ENDPOINT || '',
+        credentials: {
+          accessKeyId: process.env.S3_ACCESS_KEY || '',
+          secretAccessKey: process.env.S3_SECRET_KEY || '',
+        },
+      },
+    }),
   ],
   secret: process.env.PAYLOAD_SECRET,
   sharp,

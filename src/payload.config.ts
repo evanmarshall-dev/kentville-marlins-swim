@@ -18,7 +18,8 @@ import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
 
 // Needed for storage bucket.
-import { s3Storage } from '@payloadcms/storage-s3'
+// import { s3Storage } from '@payloadcms/storage-s3'
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -71,21 +72,33 @@ export default buildConfig({
   plugins: [
     ...plugins,
     // Install @payloadcms/storage-s3 and add below for configuration.
-    s3Storage({
+    // s3Storage({
+    //   collections: {
+    //     // Specify which collections will be uploaded.
+    //     media: true,
+    //   },
+    //   // Needs to be passed in as a string.
+    //   bucket: process.env.S3_BUCKET_NAME || '',
+    //   config: {
+    //     region: process.env.S3_REGION || '',
+    //     endpoint: process.env.S3_ENDPOINT || '',
+    //     credentials: {
+    //       accessKeyId: process.env.S3_ACCESS_KEY || '',
+    //       secretAccessKey: process.env.S3_SECRET_KEY || '',
+    //     },
+    //   },
+    // }),
+    vercelBlobStorage({
+      enabled: true, // Optional, defaults to true
+      // Specify which collections should use Vercel Blob
       collections: {
-        // Specify which collections will be uploaded.
         media: true,
+        // 'media-with-prefix': {
+        //   prefix: 'my-prefix',
+        // },
       },
-      // Needs to be passed in as a string.
-      bucket: process.env.S3_BUCKET_NAME || '',
-      config: {
-        region: process.env.S3_REGION || '',
-        endpoint: process.env.S3_ENDPOINT || '',
-        credentials: {
-          accessKeyId: process.env.S3_ACCESS_KEY || '',
-          secretAccessKey: process.env.S3_SECRET_KEY || '',
-        },
-      },
+      // Token provided by Vercel once Blob storage is added to your Vercel project
+      token: process.env.BLOB_READ_WRITE_TOKEN,
     }),
   ],
   secret: process.env.PAYLOAD_SECRET,
